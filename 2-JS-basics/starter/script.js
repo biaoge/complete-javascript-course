@@ -36,7 +36,7 @@ jane['lastName'] = 'Smith';
 console.log(jane);
 
 
-console.log(calcAge());
+// console.log(calcAge());
 function calculateAge(birthYear) {
     return 2018 - birthYear;
 }
@@ -265,3 +265,23 @@ tips[1] = 20;
 console.log(tips);
 console.log(finalValues);
 
+var compress = function(chars) {
+    var len = chars.length;
+    chars.push('end');
+    var cnt = 1;
+    var pre = chars.shift();
+    for(let i = 0; i < len; i++) {
+        let cur = chars.shift();
+        if(pre === cur) {
+            cnt++;
+        } else {
+            chars.push(pre);
+            if(cnt > 1) {
+                chars.push(...String(cnt).split(''));
+            }
+            pre = cur;
+            cnt = 1;
+        }
+    }
+    return chars.length;
+};
