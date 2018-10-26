@@ -34,6 +34,7 @@ jane.firstName = 'Jane';
 jane.birthYear = 1969;
 jane['lastName'] = 'Smith';
 console.log(jane);
+console.log(jane[lastName]);
 
 
 console.log(calcAge());
