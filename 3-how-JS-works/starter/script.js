@@ -143,8 +143,153 @@ var mike = {
 mike.calcAge = john.calcAge;
 mike.calcAge();
 
+var toHex = function(num) {
+    if(num == 0) {
+        return '0';
+    }
+
+    const hexMap = {
+        '10': 'a',
+        '11': 'b',
+        '12': 'c',
+        '13': 'd',
+        '14': 'e',
+        '15': 'f'
+    };
+
+    let res = [];
+    let isNeg = false;
+    if(num < 0) {
+        isNeg = true;
+        num = - num - 1;    //这一步很巧妙
+    }
+    while(num > 0) {
+        res.push(num % 16);
+        num = Math.floor(num / 16);
+    }
+    if(isNeg) {
+        res = res.map(e => {
+            e = 15 - e;
+            if(e >= 10) {
+                console.log(hexMap[e]);
+                console.log(hexMap[10]);
+                console.log(hexMap['10']);
+                return hexMap[e];
+            } else {
+                return e;
+            }
+        });
+        for(let i = res.length; i < 8; i++) {
+            res.push('f');
+        }
+    } else {
+        res = res.map(e => {
+            if(e >= 10) {
+                return hexMap[e];
+            } else {
+                return e;
+            }
+        });
+    }
+
+    return res.reverse().join('');    
+};
+
+toHex(-3);
 
 
+// var jane = new Object();
+// jane.firstName = 'Jane';
+// jane.birthYear = 1969;
+// jane['lastName'] = 'Smith';
+// console.log(jane);
+// console.log(jane[lastName]);
 
 
+var john = {
+    firstName: 'John',
+    lastName: 'Smith',
+    birthYear: 1992,
+    family: ['Jane', 'Mark', 'Bob', 'Emily'],
+    job: 'teacher',
+    isMarried: false,
+    calcAge: function() {
+        return 2018 - this.birthYear;   //this指当前context，即john对象
+    }
+};
+
+var lastName = 'l'
+
+console.log(john);
+console.log(john.firstName);
+console.log(john[lastName]);  //注意括号里必须是string
+
+
+var compress = function(chars) {
+    let slow = 0, fast = 0;
+    while(fast < chars.length) {
+        if(chars[fast] === chars[slow]) {
+            fast++;
+        } else {
+            if(fast - slow > 1) {
+                let num = fast - slow;
+                chars.splice(++slow, num - 1);
+                while(num > 0) {
+                    chars.splice(+slow, 0, (num % 10).toString());
+                    num = Math.floor(num / 10);
+                }
+            }
+            slow = fast;
+            fast++;
+        }
+    }
+    if(fast - slow > 1) {
+        let num = fast - slow;
+        chars.splice(++slow, num - 1);
+        while(num > 0) {
+            chars.splice(slow, 0, (num % 10).toString());
+            num = Math.floor(num / 10);
+        }
+    }
+    return chars.length;
+};
+
+var findRadius = function(houses, heaters) {
+    heaters.sort(function(a, b){return a - b}); //O(mlogm)
+    var closetHeaters = [];
+    var res = 0;
+    for(let i = 0; i < houses.length; i++) {    //O(n)
+        let heaterPos = findClosetHeaters(heaters, houses[i]);   //O(logm)
+        closetHeaters.push(heaterPos);
+    }
+
+    console.log(closetHeaters);
+
+    for(let i = 0; i < closetHeaters.length; i++) {
+        res = Math.max(res, Math.abs(houses[i] - closetHeaters[i]));
+    }
+    return res;
+    
+    // binary search
+    function findClosetHeaters(heaters, house) {
+        var left = 0, right = heaters.length - 1;
+        while(left <= right) {
+            let mid = Math.floor(left + (right - left) / 2);
+            if(heaters[mid] == house) {
+                return heaters[mid];
+            } else if(heaters[mid] < house) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        if(left === heaters.length) return heaters[left - 1];
+        if(left > 0 && Math.abs(heaters[right] - house) <= Math.abs(heaters[left] - house)) {
+            return heaters[right];
+        }
+        return heaters[left];
+    }
+    
+};
 
