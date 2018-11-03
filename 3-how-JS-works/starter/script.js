@@ -293,3 +293,25 @@ var findRadius = function(houses, heaters) {
     
 };
 
+var matrixReshape = function(nums, r, c) {
+    var curRow = nums.length;
+    var curCol = nums[0].length;
+    if (curRow <= r && curCol <= c) {
+        return nums;
+    }
+    
+    var res = new Array(r);
+    for (let i = 0; i < res.length; i++) {
+      res[i] = new Array(c);
+    }
+
+
+    
+    for(let i = 0; i < curRow * curCol; i++) {
+        let newRow = Math.floor(i / c);
+        let newCol = i % c;
+        res[newRow][newCol] = nums[Math.floor(i / curCol)][i % curCol];
+    }
+    
+    return res;
+};
