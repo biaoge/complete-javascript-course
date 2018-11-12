@@ -225,6 +225,10 @@ console.log(john.firstName);
 console.log(john[lastName]);  //注意括号里必须是string
 
 
+
+
+// Leetcode Algorithm problem.
+
 var compress = function(chars) {
     let slow = 0, fast = 0;
     while(fast < chars.length) {
@@ -314,4 +318,86 @@ var matrixReshape = function(nums, r, c) {
     }
     
     return res;
+};
+
+var maxDistance = function(arrays) {
+    var min = Number.MAX_SAFE_INTEGER;
+    var max = Number.MIN_SAFE_INTEGER;
+    
+    var secondMin = Number.MAX_SAFE_INTEGER;
+    var secondMax = Number.MIN_SAFE_INTEGER;
+    
+    var minIdx = 0;
+    var maxIdx = 0;
+    
+    for(let i = 0; i < arrays.length; i++) {
+        if(min > arrays[i][0]) {
+            secondMin = min;
+            min = arrays[i][0];
+            minIdx = i;
+        } else if(secondMin > arrays[i][0]) {
+            secondMin = arrays[i][0];
+        }
+        
+        if(max < arrays[i][arrays[i].length - 1]) {
+            secondMax = max;
+            max = arrays[i][arrays[i].length - 1];
+            maxIdx = i;
+        } else if(secondMax < arrays[i][arrays[i].length - 1]) {
+            secondMax = arrays[i][arrays[i].length - 1];
+        }
+    }
+    
+    if(max === min) {
+        return 0;
+    }
+
+    if(minIdx !== maxIdx) {
+        return max - min;
+    }
+    
+    return max - secondMin > secondMax - min ? max - secondMin : secondMax - min;
+};
+
+var shortestCompletingWord = function(licensePlate, words) {
+    var map = new Array(26);
+    map.fill(0);
+    var len = 0;
+    for(let i = 0; i < licensePlate.length; i++) {
+        let curChar = licensePlate.charAt(i);
+        if(isLetter(curChar)) {
+           if(map[curChar.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)] == 0) {
+                len++;
+            }
+            map[curChar.toLowerCase().charCodeAt(0) - 'a'.charCodeAt(0)]++;
+        }
+    }
+
+    var res = '';
+
+    for(let i = 0; i < words.length; i++) {
+        let tmpMap = new Array(26);
+        let tmpLen = len;
+        for(let k = 0; k < 26; k++) {
+            tmpMap[k] = map[k];
+        }
+        for(let j = 0; j < words[i].length; j++) {
+            if(tmpMap[words[i].charAt(j).charCodeAt(0) - 'a'.charCodeAt(0)] > 0) {
+                tmpMap[words[i].charAt(j).charCodeAt(0) - 'a'.charCodeAt(0)]--;
+                if(tmpMap[words[i].charAt(j).charCodeAt(0) - 'a'.charCodeAt(0)] == 0) {
+                    tmpLen--;
+                }
+            }
+            if(tmpLen == 0 && (res === '' || res.length > words[i].length))
+             {
+                res = words[i];
+            }
+        }
+    }
+
+    return res;
+    
+    function isLetter(c) {
+        return c.toLowerCase() != c.toUpperCase();
+    }
 };
