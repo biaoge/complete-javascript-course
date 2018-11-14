@@ -225,6 +225,18 @@ console.log(john.firstName);
 console.log(john[lastName]);  //注意括号里必须是string
 
 
+
+
+
+
+
+
+//-------------------------------------------------------------------
+/**
+ * LeetCode algorithm
+ * 
+ */
+
 var compress = function(chars) {
     let slow = 0, fast = 0;
     while(fast < chars.length) {
@@ -293,3 +305,191 @@ var findRadius = function(houses, heaters) {
     
 };
 
+var nextGreaterElement = function(findNums, nums) {
+    var map = {};
+    var deque = [];
+    var res = [];
+    for(let i = 0; i < nums.length; i++) {
+        while(deque.length > 0 && deque[deque.length - 1] < nums[i]) {
+            map[deque.pop()] = nums[i];
+        }
+        deque.push(nums[i]);
+    }
+    while(deque.length > 0) {
+        map[deque.pop()] = -1;
+    }
+    for(let i = 0; i < findNums.length; i++) {
+        res[i] = map[findNums[i]];
+    }
+    return res;
+};
+
+var findWords = function(words) {
+    var row1 = new Set(['q','w','e','r','t','y','u','i','o','p']);
+    var row2 = new Set(['a','s','d','f','g','h','j','k','l']);
+    var row3 = new Set(['z','x','c','v','b','n','m']);
+
+    var res = [];
+    for(let i = 0; i < words.length; i++) {
+        let k = 0;
+        let curWord = words[i].toLowerCase();
+        if(row1.has(curWord.charAt(k))) {
+            if(wordInRow(row1, curWord)) {
+                res.push(curWord);
+            }
+        } else if(row2.has(curWord.charAt(k))) {
+            if(wordInRow(row2, curWord)) {
+                res.push(curWord);
+            }
+        } else if(row3.has(curWord.charAt(k))) {
+            if(wordInRow(row3, curWord)) {
+                res.push(curWord);
+            }
+        }
+    }
+
+    return res;
+
+    function wordInRow(row, str) {
+        var k = 0;
+        while(k < str.length && row.has(str.charAt(k))) {
+            k++;
+        }
+        return k === str.length;
+    }
+};
+
+var findLHS = function(nums) {
+    var map = new Map();
+    var res = 0;
+    for(let i = 0; i < nums.length; i++) {
+        map.set(nums[i], (map.get(nums[i]) || 0) + 1);
+    }
+
+    for(var key of map.keys()) {
+        if(map.has(key + 1)) {
+            res = Math.max(map.get(key) + map.get(key + 1), res);
+        }
+    }
+
+    return res;
+};
+
+var canPlaceFlowers = function(flowerbed, n) {
+    var emptySlots = 0;
+    for(let i = 0; i < flowerbed.length; i++) {
+        if(flowerbed[i] == 0) {
+            emptySlots++;
+        } else {
+            emptySlots = 0;
+        }
+        if(emptySlots == 2 && i < flowerbed.length - 1 && flowerbed[i + 1] !== 1) {
+            n--;
+            emptySlots = 0;
+        }
+    }
+
+    if(emptySlots == 2) {
+        n--;
+    }
+
+    return n === 0;
+};
+
+var maximumProduct = function(nums) {
+    var firstMax = Number.MIN_SAFE_INTEGER;
+    var secondMax = Number.MIN_SAFE_INTEGER;
+    var thirdMax = Number.MIN_SAFE_INTEGER;
+
+    var firstMin = Number.MAX_SAFE_INTEGER;
+    var secondMin = Number.MAX_SAFE_INTEGER;
+
+    for(let i = 0; i < nums.length; i++) {
+        if(nums[i] >= firstMax) {
+            thirdMax = secondMax;
+            secondMax = firstMax;
+            firstMax = nums[i];
+        } else if(nums[i] >= secondMax) {
+            thirdMax = secondMax;
+            secondMax = nums[i];
+        } else if(nums[i] > thirdMax) {
+            thirdMax = nums[i];
+        }
+
+        if(nums[i] <= firstMin) {
+            secondMin = firstMin;
+            firstMin = nums[i];
+        } else if(nums[i] < secondMin) {
+            secondMin = nums[i];
+        }
+    }
+
+    return Math.max(firstMax * secondMax * thirdMax, firstMin * secondMin * firstMax);
+};
+
+var robotSim = function(commands, obstacles) {
+    let posX = 0, posY = 0;
+    const dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // dirs[0]: up; dirs[1]: right; dirs[2]: down; dirs[3]: left;
+    let d = 0;
+    let max = 0;
+    let set = new Set();
+    console.log(dirs);
+    for(obstacle of obstacles) {
+        set.add(`${obstacle[0]}:${obstacle[1]}`);
+    }
+
+    for(let command of commands) {
+        if(command == -1) {
+            d = (d + 1) % 4;
+        } else if(command == -2) {
+            d = (d + 3) % 4;
+        } else {
+            while(command > 0) {
+                const next = `${posX + dirs[d][0]}:${posY + dirs[d][1]}`;
+                if(!set.has(next)) {
+                    posX += dirs[d][0];
+                    posY += dirs[d][1];
+                } else {
+                    break;
+                }
+                command--;
+            }
+        }
+        max = Math.max(posX * posX + posY * posY);
+    }
+
+    return max;
+};
+
+
+var TreeNode = function(val) {
+    this.val = val;
+    this.left = this.right = null;
+}
+
+var root = new TreeNode(5);
+root.left = new TreeNode(3);
+root.right = new TreeNode(6);
+
+var increasingBST = function(root) {    
+    let newRoot = -1, dummy = -1;
+
+    inOrder(root);
+    return newRoot;
+
+    function inOrder(root) {
+        if(root === null) {
+            return null;
+        }
+        inOrder(root.left);
+        if(newRoot === -1) {
+            newRoot = new TreeNode(root.val);
+            dummy = newRoot;
+        } else {
+            dummy.right = new TreeNode(root.val);
+            dummy = dummy.right;
+        }
+
+        inOrder(root.right);
+    }
+};
