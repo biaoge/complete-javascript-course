@@ -9,7 +9,136 @@
 <body>
     <h1>Asynchronous JavaScript</h1>
     <script>
+        // const second = () => {
+        //     setTimeout(() => {
+        //         console.log('Async Hey yhere');
+        //     }, 2000);
+        // }
+        // const first = () => {
+        //     console.log('Hey there');
+        //     second();
+        //     console.log('The end');
+        // }
         
+        // first();
+        
+        // example of Callback Hell (callback inside of another callback....)
+        // function getRecipe() {
+        //     setTimeout(() => {
+        //         const recipeID = [523, 432, 883, 974];
+        //         console.log(recipeID);
+
+        //         setTimeout(id => {
+        //             const recipe = {title: 'Fresh Tomato Pasta', publisher: 'Jonas'};
+        //             console.log(`${id}, ${recipe.title}`);
+
+        //             setTimeout(publisher => {
+        //                 const recipe2 = {title: 'Italian Pizza', publisher: 'Jonas'};
+        //                 console.log(recipe2);
+        //             }, 1500, recipe.publisher);
+        //         }, 1500, recipeID[2]);
+            
+        //     }, 1500);
+        // }
+
+        // getRecipe();
+
+        // Promise 改写上面callback hell, Promise
+        // const getIDs = new Promise((resolve, rejiect) => {
+        //     setTimeout(() => {
+        //         resolve([523, 883, 432, 974]);
+        //     }, 1500);
+        // });
+
+        // const getRecipe = recID => {
+        //     return new Promise((resolve, rejiect) => {
+        //         setTimeout(ID => {
+        //             const recipe = {title: 'Fresh Tomato Paste', publisher: 'Jonas'};
+        //             resolve(`${ID}: ${recipe.title}`);
+        //         }, 1500, recID);
+        //     });
+        // };
+
+        // const getRelated = publisher => {
+        //     return new Promise((resolve, rejiect) => {
+        //         setTimeout(pub => {
+        //             const recipe2 = {title: 'Italian Pizza', publisher: 'Jonas'};
+        //             resolve(`${pub}: ${recipe2.title}`);
+        //         }, 1500, publisher);
+        //     });
+        // };
+
+        // getIDs
+        // .then(IDs => {
+        //     console.log(IDs);
+        //     return getRecipe(IDs[2]);
+        // })
+        // .then(recipe => {
+        //     console.log(recipe);
+        //     return getRelated('Jonas');
+        // })
+        // .then(recipe => {
+        //     console.log(recipe);
+        // })
+        // .catch(error => {   //如果resolve返回reject，由catch来handle
+        //     console.log('Error!');
+        // })
+
+        // async function getRecipesAW() {
+        //     const IDs = await getIDs;
+        //     console.log(IDs);
+
+        //     const recipe = await getRecipe(IDs[2]);
+        //     console.log(recipe);
+
+        //     const related = await getRelated('Jonas');
+        //     console.log(related);
+
+        //     return recipe;
+        // }
+        // // const rec = getRecipesAW();
+        // // console.log(rec);
+        // getRecipesAW().then(res => {
+        //     console.log(`${res} is the best ever!`);
+        // })
+
+        function getWeather(woeId) {
+            // return一个promise
+            fetch(`http://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeId}/`)
+            .then(res => {
+                // console.log(res);
+                return res.json();  // also return a promise
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(err => console.log(err));
+        }
+
+        getWeather(2487956);
+        getWeather(44418);
+
+        async function getWeatherAW(woeId) {
+            const res = await fetch(`http://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeId}/`);
+            const resJson = await res.json();
+            console.log(resJson);
+        }
+
+        // 注意下面两个function的return结果并不一定是SF在前，也有可能London在前，他们都是在background运行。
+        getWeatherAW(2487956);
+        getWeatherAW(44418);
+
+        async function getWeatherAWTC(woeId) {
+            try {
+                const res = await fetch(`http://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeId}/`);
+                const resJson = await res.json();
+                console.log(resJson);
+                return resJson;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
     </script>
 </body>
 </html>
